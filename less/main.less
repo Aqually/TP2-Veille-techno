@@ -1,0 +1,14 @@
+// out: ../style/style.css, sourcemap: false, compress: true
+
+/* fichier de compilation des CSSs */
+
+@import 'normalize.less';
+@import '01_petit.less';
+
+@media all and (min-width: 600px) {
+	@import '02_moyen.less';
+}
+
+@media all and (min-width: 1000px) {
+	@import '03_grand.less';
+}
