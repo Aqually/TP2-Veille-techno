@@ -33,12 +33,11 @@ app.get("/requetes/afficher_les_posts", (req, res) => {
 app.get("/requetes/afficher_un_post/:id", (req, res) => {
     const id = req.params.id
     console.log(id);
-    var cursor = db.collection('blog').find({"id": id }).toArray(function(err, resultat) {
+    var cursor = db.collection('blog').find({"id": id }).toArray( (err, resultat) => {
         if (err)
             return console.log(err)
         // affiche le contenu de la BD
-        console.log(resultat);
-        res.send(resultat);
+        res.send(resultat[0]);
     })
 })
 
@@ -54,7 +53,7 @@ app.get('/ajouter', (req, res) => {
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/dist"));
-app.get("/", (req, res) => {
+app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname + "/dist", "index.html"));
 })
 app.listen(port);
