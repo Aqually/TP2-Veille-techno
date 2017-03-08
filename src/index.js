@@ -5,10 +5,10 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import {Router, browserHistory} from "react-router";
 import reducers from './reducers';
-import reduxThunk from 'redux-thunk';
+import promise from "redux-promise";
 require("../style/style.css");
 
-const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
+const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
 
 ReactDOM.render(
   <Provider store={createStoreWithMiddleware(reducers)}>

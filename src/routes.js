@@ -11,7 +11,7 @@ import AfficherPost from "./components/afficher_post";
 export default (
     <Route path="/" component={App}>
         <IndexRoute component={BlogIndex} />
-        <Route path="posts/new" component={NouveauPost} />
-        <Route path="posts/:id" component={AfficherPost} />
+        <Route path="posts/nouveau" component={NouveauPost} />
+        <Route path="/:id" component={AfficherPost} />
     </Route>
 );
