@@ -20,43 +20,49 @@ class PostsNew extends React.Component {
     }
 
     render(){
-        const {fields:{titre,categories,contenu, auteur, permalien}, handleSubmit } = this.props;
+        const {fields:{titre,categories,contenu, auteur, appercu, permalien}, handleSubmit } = this.props;
 
         return(
             <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-                <h3>Create A New Post</h3>
-                <div className={`form-group ${titre.touched && titre.invalid ? 'has-danger': '' }`}>
+                <h1>Créer une nouvelle article</h1>
+                <div>
                     <label>Titre</label>
-                    <input type="text" className="form-control" {...titre} />
-                    <div className="text-help">{titre.touched ? titre.error : ""}</div>
+                    <input type="text" {...titre} />
+                    <div>{titre.touched ? titre.error : ""}</div>
                 </div>
 
-                <div className={`form-group ${auteur.touched && auteur.invalid ? 'has-danger': '' }`}>
+                <div>
                     <label>Auteur</label>
-                    <input type="text" className="form-control" {...auteur} />
-                    <div className="text-help">{auteur.touched ? auteur.error : ""}</div>
+                    <input type="text" {...auteur} />
+                    <div>{auteur.touched ? auteur.error : ""}</div>
                 </div>
 
-                <div className={`form-group ${permalien.touched && permalien.invalid ? 'has-danger': '' }`}>
+                <div>
                     <label>Permalien</label>
-                    <input type="text" className="form-control" {...permalien} />
-                    <div className="text-help">{permalien.touched ? permalien.error : ""}</div>
+                    <input type="text" {...permalien} />
+                    <div>{permalien.touched ? permalien.error : ""}</div>
                 </div>
 
-                <div className={`form-group ${categories.touched && categories.invalid ? 'has-danger': '' }`}>
+                <div>
                     <label>Categories</label>
-                    <input type="text" className="form-control" {...categories} />
-                    <div className="text-help">{categories.touched ? categories.error : ""}</div>
+                    <input type="text" {...categories} />
+                    <div>{categories.touched ? categories.error : ""}</div>
                 </div>
 
-                <div className={`form-group ${contenu.touched && contenu.invalid ? 'has-danger': '' }`}>
+                <div>
+                    <label>Apperçu</label>
+                    <input type="text" {...appercu} />
+                    <div>{appercu.touched ? appercu.error : ""}</div>
+                </div>
+
+                <div>
                     <label>Contenu</label>
-                    <textarea className="form-control" {...contenu} />
-                    <div className="text-help">{contenu.touched ? contenu.error : ""}</div>
+                    <textarea {...contenu} />
+                    <div>{contenu.touched ? contenu.error : ""}</div>
                 </div>
 
-                <button type="submit" className="btn btn-primary">Submit</button>
-                <Link to="/" className="btn btn-danger">Cancel</Link>
+                <button type="submit">Submit</button>
+                <Link to="/">Cancel</Link>
             </form>
         );
     }
@@ -65,23 +71,27 @@ class PostsNew extends React.Component {
 function validate(values){
     const errors = {};
     if(!values.titre){
-        errors.titre = "Enter a name";
+        errors.titre = "Entrer un titre pour l'article";
     }
 
     if(!values.auteur){
-        errors.auteur = "Enter a auteur";
+        errors.auteur = "Entrer le nom de l'auteur";
     }
 
     if(!values.permalien){
-        errors.permalien = "Enter a permalien";
+        errors.permalien = "Entrer le lien de l'article";
+    }
+
+    if(!values.appercu){
+        errors.appercu = "Entrer un apperçu de l'article";
     }
 
     if(!values.categories){
-        errors.categories = "Enter atleast one category";
+        errors.categories = "Enter la catégorie de l'article";
     }
 
     if(!values.contenu){
-        errors.contenu = "Enter contenu";
+        errors.contenu = "Enter le contenu de l'article";
     }
 
     return errors
@@ -89,7 +99,7 @@ function validate(values){
 
 
 export default reduxForm({
-  form:'PostNewForm',
-  fields:['titre','categories','contenu', "auteur", "permalien"],
-  validate
+    form:'PostNewForm',
+    fields:['titre','categories','contenu', "auteur", "appercu", "permalien"],
+    validate
 },null,{creeUnPost})(PostsNew);

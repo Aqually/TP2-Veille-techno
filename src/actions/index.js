@@ -5,8 +5,8 @@ export const FETCH_UN_POST = "FETCH_UN_POST";
 export const CREER_POST = "CREER_POST";
 export const DETRUIRE_POST = "DETRUIRE_POST";
 
-export function fetchTousLesPosts(){
-    const request = axios.get("requetes/afficher_les_posts");
+export function fetchTousLesPosts(ordre = -1, data = {}){
+    const request = axios.post("requetes/afficher_les_posts/" + ordre, data);
     return {
         type: FETCH_TOUS_LES_POSTS,
         payload: request

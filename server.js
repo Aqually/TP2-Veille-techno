@@ -6,18 +6,14 @@ const ObjectID = require('mongodb').ObjectID;
 const port = process.env.PORT || 8080;
 const app = express();
 
-
 // parse application/json
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
-// parse application/x-www-form-urlencoded
-let urlencodedParser = bodyParser.urlencoded({extended: false})
-
 //pour se connecter à la base de donnée Mongo
 MongoClient.connect('mongodb://127.0.0.1:27017/blog', (err, database) => {
     if (err)
-        return console.log(err)
+        return console.warn(err)
     db = database
 })
 
@@ -27,28 +23,50 @@ app.get('/requetes/detruire/:permalien', (req, res) => {
         "permalien": permalien
     }, (err, resultat) => {
         if (err)
-            return console.log(err)
-        console.log("delete?")
+            return console.warn(err)
         res.send(resultat);
     })
 })
 
-app.get("/requetes/afficher_les_posts", (req, res) => {
-    var cursor = db.collection('blog').find().toArray(function(err, resultat) {
+app.post("/requetes/afficher_les_posts/:ordre", (req, res) => {
+    console.log(req.body);
+    const ordre = parseInt(req.params.ordre)
+    const cursor = db.collection('blog').find(req.body).sort([['_id', ordre]]).toArray( (err, resultats) => {
         if (err)
-            return console.log(err)
+            return console.warn(err)
         // affiche le contenu de la BD
-        res.send(resultat);
+        console.log(resultats);
+        res.send(resultats.map( (resultat) => {return ajouterLaDate(resultat)}));
     })
 })
+
+//pour ajouter les zeros à la date
+function pad(n){return n<10 ? '0'+n : n}
+
+function assignerMois(m){
+    const lesMois = ["janvier", "février", "mars", "avril", "mai", "juin","juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+    return lesMois[m];
+}
+
+// obtenir le temps de publication de l'article
+function ajouterLaDate(data){
+    const temps = data._id.getTimestamp();
+    data.date =
+        "Le " + temps.getDate() + " " +
+        assignerMois((temps.getMonth()+1)) +" "+
+        temps.getFullYear()+" à "+
+        pad(temps.getHours()) + ":" +
+        pad(temps.getMinutes()) + ":" +
+        pad(temps.getSeconds());
+    return data;
+}
 
 app.get("/requetes/afficher_un_post/:permalien", (req, res) => {
     const permalien = req.params.permalien
     var cursor = db.collection('blog').find({"permalien": permalien }).toArray( (err, resultat) => {
         if (err)
-            return console.log(err)
-        // affiche le contenu de la BD
-        res.send(resultat[0]);
+            return console.warn(err)
+        res.send(ajouterLaDate(resultat[0]));
     })
 })
 
@@ -57,13 +75,10 @@ app.post('/requetes/ajouter_un_post', (req, res) => {
     //on sauvegarde les données dans la DB mongo
     db.collection('blog').save(req.body, (err, result) => {
         if (err)
-            return console.log(err)
-        console.log('sauvegarder dans la BD')
+            return console.warn(err)
         res.send(result);
     })
 })
-
-
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/dist"));

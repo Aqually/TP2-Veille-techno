@@ -24,7 +24,6 @@ class AfficherPost extends Component{
     }
 
     render(){
-        console.log(this.props);
         if(!this.props.post){
             return (<div>Loading...</div>)
         }
@@ -35,8 +34,9 @@ class AfficherPost extends Component{
                 <button onClick={this.onDeleteClick.bind(this)}>
                     Delete post
                 </button>
-                <h3>{this.props.post.titre}</h3>
-                <h6>Categories: {this.props.post.categories}</h6>
+                <h1>{this.props.post.titre}</h1>
+                <h2>{this.props.post.date} par {this.props.post.auteur}</h2>
+                <h3>Categorie: {this.props.post.categories}</h3>
                 <p>{this.props.post.contenu}</p>
             </div>
         )
