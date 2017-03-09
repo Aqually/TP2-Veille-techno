@@ -12,11 +12,10 @@ class BlogIndex extends Component {
     }
 
     renderPosts(){
-        console.log(this.props.posts);
         return this.props.posts.map((post) => {
             return (
-                <li key={post.id}>
-                    <Link to={'/' + post.id}>
+                <li key={post._id}>
+                    <Link to={'/' + post.permalien}>
                         <span>{post.categories}</span>
                         <strong>{post.titre}</strong>
                     </Link>
