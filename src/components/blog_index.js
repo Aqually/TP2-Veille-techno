@@ -13,6 +13,7 @@ class BlogIndex extends Component {
     constructor(props){
         super(props);
         this.state = initialState;
+        this.changerOrdre = this.changerOrdre.bind(this);
     }
 
     //appeler avant que le component est render pour la première fois
@@ -29,7 +30,7 @@ class BlogIndex extends Component {
         let categories = this.state.categories
         let auteur = this.state.auteur
         rechercheType  === "categories" ? categories = rechercheDefault : auteur = rechercheDefault;
-        this.rechercherPost(categories, auteur);
+        this.rechercherPost(categories, auteur, this.state.ordre);
     }
 
     renderFiltre(laRecherche, rechercheType){
@@ -52,9 +53,9 @@ class BlogIndex extends Component {
                 <li key={post._id}>
                     <h2><Link to={'/' + post.permalien}>{post.titre}</Link></h2>
                     <article>
-                        <h3>{post.date} par <span onClick={ () =>{this.rechercherPost(this.state.categories, post.auteur)}} > {post.auteur}</span></h3>
+                        <h3>{post.date} par <span onClick={ () =>{this.rechercherPost(this.state.categories, post.auteur, this.state.ordre)}} > {post.auteur}</span></h3>
                         <p>{post.appercu}</p>
-                        <p onClick={ () =>{this.rechercherPost(post.categories, this.state.auteur)} } >{post.categories}</p>
+                        <p onClick={ () =>{this.rechercherPost(post.categories, this.state.auteur, this.state.ordre)} } >{post.categories}</p>
                     </article>
                 </li>
             )
@@ -62,9 +63,7 @@ class BlogIndex extends Component {
     }
 
     changerOrdre(){
-        const ordre = this.state.ordre * -1;
-        this.setState({ordre})
-        this.rechercherPost(this.state.categories, this.state.auteur, ordre)
+        this.rechercherPost(this.state.categories, this.state.auteur, this.state.ordre * -1)
     }
 
     render(){
@@ -79,9 +78,7 @@ class BlogIndex extends Component {
                 { this.renderFiltre(this.state.categories, "categories") }
                 { this.renderFiltre(this.state.auteur, "auteur") }
 
-                <span onClick={ () => {this.changerOrdre()} }>
-                    <BoutonTriOrdre ordre={this.state.ordre} />
-                </span>
+                <BoutonTriOrdre changerTri={this.changerOrdre} ordre={this.state.ordre} />
 
                 <h1>Les articles</h1>
                 <ul>
