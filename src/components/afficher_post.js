@@ -29,7 +29,6 @@ class AfficherPost extends Component{
         }
         return (
             <div>
-
                 <Link to="/">Back to Index</Link>
                 <button onClick={this.onDeleteClick.bind(this)}>
                     Delete post

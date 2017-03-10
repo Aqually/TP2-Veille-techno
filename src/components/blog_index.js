@@ -3,33 +3,42 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {fetchTousLesPosts} from "../actions/index";
 import { Link } from "react-router";
+import BoutonTriOrdre from "./bouton_trier_ordre";
 
 const rechercheDefault = {$exists : true}
-const initialState = {recherche:{ categories: rechercheDefault, auteur: rechercheDefault }, ordre:-1};
+const initialState = { categories: rechercheDefault, auteur: rechercheDefault, ordre:-1};
 
 class BlogIndex extends Component {
 
     constructor(props){
         super(props);
         this.state = initialState;
-        //this.afficherCategorie = this.afficherCategorie.bind(this);
     }
-
 
     //appeler avant que le component est render pour la première fois
     componentWillMount(){
-        this.props.fetchTousLesPosts(this.state.ordre, this.state.recherche);
+        this.props.fetchTousLesPosts();
     }
 
     rechercherPost(categories = { rechercheDefault }, auteur = { rechercheDefault }, ordre = -1){
-        const recherche = { categories ,auteur }
-        this.setState({ recherche,ordre })
-        this.props.fetchTousLesPosts(ordre, recherche);
+        this.setState({ categories,ordre,auteur })
+        this.props.fetchTousLesPosts(ordre, {categories ,auteur});
     }
 
-    renderFiltre(laRecherche){
+    enleverRecherche(rechercheType){
+        let categories = this.state.categories
+        let auteur = this.state.auteur
+        rechercheType  === "categories" ? categories = rechercheDefault : auteur = rechercheDefault;
+        this.rechercherPost(categories, auteur);
+    }
+
+    renderFiltre(laRecherche, rechercheType){
         if(laRecherche != rechercheDefault){
-            return (<span>{laRecherche}</span>)
+            return (
+                <span onClick={ ()=>{ this.enleverRecherche(rechercheType) } }>
+                    {rechercheType + ": " + laRecherche}
+                </span>
+            )
         }
     }
 
@@ -43,14 +52,19 @@ class BlogIndex extends Component {
                 <li key={post._id}>
                     <h2><Link to={'/' + post.permalien}>{post.titre}</Link></h2>
                     <article>
-                        <h3>{post.date} par <span onClick={ () =>{this.rechercherPost(this.state.recherche.categories, post.auteur)}} > {post.auteur}</span></h3>
+                        <h3>{post.date} par <span onClick={ () =>{this.rechercherPost(this.state.categories, post.auteur)}} > {post.auteur}</span></h3>
                         <p>{post.appercu}</p>
-                        <p onClick={ () =>{this.rechercherPost(post.categories, this.state.recherche.auteur)} } >{post.categories}</p>
+                        <p onClick={ () =>{this.rechercherPost(post.categories, this.state.auteur)} } >{post.categories}</p>
                     </article>
-
                 </li>
             )
         })
+    }
+
+    changerOrdre(){
+        const ordre = this.state.ordre * -1;
+        this.setState({ordre})
+        this.rechercherPost(this.state.categories, this.state.auteur, ordre)
     }
 
     render(){
@@ -61,12 +75,19 @@ class BlogIndex extends Component {
                         Nouveau message
                     </Link>
                 </div>
-                { this.renderFiltre(this.state.recherche.categories) }
-                { this.renderFiltre(this.state.recherche.auteur) }
+
+                { this.renderFiltre(this.state.categories, "categories") }
+                { this.renderFiltre(this.state.auteur, "auteur") }
+
+                <span onClick={ () => {this.changerOrdre()} }>
+                    <BoutonTriOrdre ordre={this.state.ordre} />
+                </span>
+
                 <h1>Les articles</h1>
                 <ul>
                     {this.renderPosts()}
                 </ul>
+
             </div>
         );
     };
