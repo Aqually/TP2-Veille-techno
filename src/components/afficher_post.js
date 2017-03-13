@@ -22,7 +22,6 @@ class AfficherPost extends Component{
         this.props.fetchUnPost(this.props.params.permalien)
             .then( () => {
                 this.initialiseLeState();
-                console.log(this.props.post);
             }
         );
     }
@@ -64,7 +63,7 @@ class AfficherPost extends Component{
             appercu: this.state.appercu,
             contenu: this.state.contenu
         }
-        console.log(data);
+
         this.props.modifierPost(data)
             .then( () =>{
                 if(data.permalien != this.props.post.permalien){
@@ -72,7 +71,7 @@ class AfficherPost extends Component{
                 }
                 this.setState({ edit: false })
                 this.props.fetchUnPost(this.state.permalien);
-            })
+        })
     }
 
     handleChange(e){
@@ -107,7 +106,7 @@ class AfficherPost extends Component{
 
     render(){
         if(!this.props.post){
-            return (<div>Chargement...</div>)
+            return (<div></div>)
         }
 
         return (

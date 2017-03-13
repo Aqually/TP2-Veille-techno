@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {bindActionCreators} from "redux";
 import {fetchTousLesPosts, rechercherDesPosts} from "../actions/index";
 import { Link } from "react-router";
 
