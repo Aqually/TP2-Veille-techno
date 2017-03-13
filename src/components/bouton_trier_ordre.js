@@ -8,7 +8,7 @@ export default class BoutonTri extends Component {
 
     render() {
         return (
-            <button onClick={this.props.changerTri}>
+            <button onClick={this.changerTri}>
                 {this.texteBouton()}
             </button>
         );
