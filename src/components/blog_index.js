@@ -12,30 +12,33 @@ class BlogIndex extends Component {
     constructor(props){
         super(props);
         this.changerOrdre = this.changerOrdre.bind(this);
+        this.rechercherPost = this.rechercherPost.bind(this);
     }
 
     //appeler avant que le component est render pour la première fois
     componentWillMount(){
-        this.props.rechercherDesPosts({categories:rechercheDefault, auteur:rechercheDefault, ordre: -1});
-        this.props.fetchTousLesPosts();
+        this.props.rechercherDesPosts({categories: rechercheDefault, auteur: rechercheDefault, ordre: -1});
     }
 
-    rechercherPost(categories = { rechercheDefault }, auteur = { rechercheDefault }, ordre = -1){
-        this.props.rechercherDesPosts({categories, auteur, ordre});
-        this.props.fetchTousLesPosts(ordre, {categories ,auteur});
+    componentDidUpdate(prevProps){
+        if(prevProps.recherche != this.props.recherche){
+            this.props.fetchTousLesPosts(this.props.recherche.ordre, {categories: this.props.recherche.categories, auteur: this.props.recherche.auteur});
+        }
+    }
+
+    rechercherPost({categories = this.props.recherche.categories, auteur = this.props.recherche.auteur, ordre = this.props.recherche.ordre}){
+        this.props.rechercherDesPosts({categories, auteur, ordre})
     }
 
     changerOrdre(){
-        let categories = this.props.recherche.categories;
-        let auteur = this.props.recherche.auteur;
-        this.rechercherPost(categories, auteur, this.props.recherche.ordre * -1)
+        this.rechercherPost({ordre:this.props.recherche.ordre * -1})
     }
 
     enleverRecherche(rechercheType){
         let categories = this.props.recherche.categories;
         let auteur = this.props.recherche.auteur;
         rechercheType  === "categories" ? categories = rechercheDefault : auteur = rechercheDefault;
-        this.rechercherPost(categories, auteur, this.props.recherche.ordre)
+        this.rechercherPost({categories, auteur})
     }
 
     renderFiltre(laRecherche, rechercheType){
@@ -50,7 +53,7 @@ class BlogIndex extends Component {
 
     renderPosts(){
         if(this.props.posts.length === 0){
-            return (<li><h2>Aucune article</h2></li>)
+            return (<li></li>)
         }
 
         return this.props.posts.map((post) => {
@@ -58,9 +61,9 @@ class BlogIndex extends Component {
                 <li key={post._id}>
                     <h2><Link to={'/article/' + post.permalien}>{post.titre}</Link></h2>
                     <article>
-                        <h3>{post.date} par <span onClick={ () =>{this.rechercherPost(this.props.recherche.categories, post.auteur, this.props.recherche.ordre)}} > {post.auteur}</span></h3>
+                        <h3>{post.date} par <span onClick={ () => {this.rechercherPost({auteur: post.auteur})} } > {post.auteur}</span></h3>
                         <p>{post.appercu}</p>
-                        <p onClick={ () =>{this.rechercherPost(post.categories, this.props.recherche.auteur, this.props.recherche.ordre)} } >{post.categories}</p>
+                        <p onClick={ () => {this.rechercherPost({categories: post.categories})} } >{post.categories}</p>
                     </article>
                 </li>
             )

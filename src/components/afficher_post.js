@@ -10,7 +10,6 @@ class AfficherPost extends Component{
     }
 
     componentWillMount(){
-        console.log(this.props.params.permalien);
         this.props.fetchUnPost(this.props.params.permalien);
     }
 
@@ -28,6 +27,7 @@ class AfficherPost extends Component{
         if(!this.props.post){
             return (<div>Loading...</div>)
         }
+
         return (
             <div>
                 <Link to="/">Back to Index</Link>

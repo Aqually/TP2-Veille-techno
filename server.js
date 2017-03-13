@@ -29,13 +29,11 @@ app.get('/requetes/detruire/:permalien', (req, res) => {
 })
 
 app.post("/requetes/afficher_les_posts/:ordre", (req, res) => {
-    console.log(req.body);
     const ordre = parseInt(req.params.ordre)
     const cursor = db.collection('blog').find(req.body).sort([['_id', ordre]]).toArray( (err, resultats) => {
         if (err)
             return console.warn(err)
         // affiche le contenu de la BD
-        console.log(resultats);
         res.send(resultats.map( (resultat) => {return ajouterLaDate(resultat)}));
     })
 })
