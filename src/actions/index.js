@@ -1,4 +1,3 @@
-import axios from "axios";
 import {requeteAJAX} from "../helpers/httpRequest"
 
 export const FETCH_TOUS_LES_POSTS = "FETCH_TOUS_LES_POSTS";
