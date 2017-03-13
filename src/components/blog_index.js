@@ -3,7 +3,6 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {fetchTousLesPosts, rechercherDesPosts} from "../actions/index";
 import { Link } from "react-router";
-import BoutonTriOrdre from "./bouton_trier_ordre";
 
 const rechercheDefault = {$exists : true}
 
@@ -51,6 +50,15 @@ class BlogIndex extends Component {
         }
     }
 
+    renderBoutonTri(){
+        const leTexte = this.props.recherche.ordre === 1 ? "Le plus anciens en premier" : "Le plus récent en premier";
+        return (
+            <button type="button" onClick={ this.changerOrdre }>
+                {leTexte}
+            </button>
+        );
+    }
+
     renderPosts(){
         if(this.props.posts.length === 0){
             return (<li></li>)
@@ -81,8 +89,7 @@ class BlogIndex extends Component {
 
                 { this.renderFiltre(this.props.recherche.categories, "categories") }
                 { this.renderFiltre(this.props.recherche.auteur, "auteur") }
-
-                <BoutonTriOrdre changerTri={this.changerOrdre} ordre={this.props.recherche.ordre} />
+                { this.renderBoutonTri() }
 
                 <h1>Les articles</h1>
                 <ul>

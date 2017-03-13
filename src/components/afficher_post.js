@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from "react";
 import {connect} from "react-redux";
-import {fetchUnPost,detruirePost} from "../actions/index";
+import Form from "./form";
+import {fetchUnPost,detruirePost, modifierPost} from "../actions/index";
 import {Link} from "react-router";
 
 class AfficherPost extends Component{
@@ -21,6 +22,7 @@ class AfficherPost extends Component{
         this.props.fetchUnPost(this.props.params.permalien)
             .then( () => {
                 this.initialiseLeState();
+                console.log(this.props.post);
             }
         );
     }
@@ -30,7 +32,7 @@ class AfficherPost extends Component{
             titre: this.props.post.titre,
             auteur: this.props.post.auteur,
             permalien: this.props.post.permalien,
-            categories: this.props.post.auteur,
+            categories: this.props.post.categories,
             appercu :this.props.post.appercu,
             contenu: this.props.post.contenu
         })
@@ -46,8 +48,7 @@ class AfficherPost extends Component{
         });
     }
 
-    handleModifier(e){
-        e.preventDefault();
+    handleModifier(){
         this.setState({ edit: !this.state.edit })
         this.initialiseLeState();
     }
@@ -55,72 +56,68 @@ class AfficherPost extends Component{
     handleFormSubmit(e){
         e.preventDefault()
         const data = {
+            _id: this.props.post._id,
             titre : this.state.titre,
             auteur: this.state.auteur,
             permalien: this.state.permalien,
             categories: this.state.categories,
-            appercu: this.state.appecu,
+            appercu: this.state.appercu,
             contenu: this.state.contenu
         }
+        console.log(data);
+        this.props.modifierPost(data)
+            .then( () =>{
+                if(data.permalien != this.props.post.permalien){
+                    this.context.router.push("/article/" + data.permalien);
+                }
+                this.setState({ edit: false })
+                this.props.fetchUnPost(this.state.permalien);
+            })
     }
 
     handleChange(e){
         this.setState( {[e.target.name]: e.target.value} )
     }
 
+    renderArticle(){
+        return (
+            <article>
+                <h1>{this.props.post.titre}</h1>
+                <h2>{this.props.post.date} par {this.props.post.auteur}</h2>
+                <h3>Categorie: {this.props.post.categories}</h3>
+                <p>{this.props.post.contenu}</p>
+                <button onClick={ this.handleModifier }>Modifier l'article</button>
+            </article>
+        )
+    }
+
+    renderForm(){
+        return(
+            <Form
+                onHandleFormSubmit={this.handleFormSubmit}
+                onHandleChange = { this.handleChange }
+                onHandleModifier = { this.handleModifier }
+                data = {
+                    {titre: this.state.titre, permalien: this.state.permalien, auteur: this.state.auteur,
+                    categories: this.state.categories, appercu: this.state.appercu, contenu: this.state.contenu}
+                }
+            />
+        )
+    }
+
     render(){
         if(!this.props.post){
-            return (<div>Loading...</div>)
+            return (<div>Chargement...</div>)
         }
 
-        if(!this.state.edit){
-            return (
-                <div>
-                    <Link to="/">Back to Index</Link>
-                    <button onClick={this.onDeleteClick.bind(this)}>
-                        Delete post
-                    </button>
-
-                    <h1>{this.props.post.titre}</h1>
-                    <h2>{this.props.post.date} par {this.props.post.auteur}</h2>
-                    <h3>Categorie: {this.props.post.categories}</h3>
-                    <p>{this.props.post.contenu}</p>
-                    <button onClick={this.handleModifier}>Modifier l'article</button>
-                </div>
-            )
-        }
-
-        return(
+        return (
             <div>
                 <Link to="/">Back to Index</Link>
                 <button onClick={this.onDeleteClick.bind(this)}>
                     Delete post
                 </button>
-
-                <form onSubmit={ this.handleFormSubmit }>
-                    <label>Titre</label>
-                    <input name="titre" onChange={ this.handleChange } type="text" value={this.state.titre} />
-
-                    <label>Permalien</label>
-                    <input name="permalien" onChange={ this.handleChange } type="text" value={this.state.permalien} />
-
-                    <label>Auteur</label>
-                    <input name="auteur" onChange={ this.handleChange } type="text" value={this.state.auteur} />
-
-                    <label>Categorie</label>
-                    <input name="categories" onChange={ this.handleChange } type="text" value={this.state.categories} />
-
-                    <label>Apperçu</label>
-                    <input name="appercu" onChange={ this.handleChange } type="text" value={this.state.appercu} />
-
-                    <label>Contenu</label>
-                    <input name="contenu" onChange={ this.handleChange } type="textarea" value={this.state.contenu} />
-                    <button type="submit">Enregistrer</button>
-                </form>
-                <button onClick={this.handleModifier}>Cancel</button>
+                { this.state.edit ? this.renderForm() : this.renderArticle() }
             </div>
-
-
         )
     }
 }
@@ -129,4 +126,4 @@ function mapStateToProps(state){
     return {post: state.posts.post};
 }
 
-export default connect(mapStateToProps,{fetchUnPost,detruirePost})(AfficherPost);
+export default connect(mapStateToProps,{fetchUnPost,detruirePost, modifierPost})(AfficherPost);

@@ -5,6 +5,7 @@ export const FETCH_UN_POST = "FETCH_UN_POST";
 export const CREER_POST = "CREER_POST";
 export const DETRUIRE_POST = "DETRUIRE_POST";
 export const RECHERCHER_POST = "RECHERCHER_POST";
+export const MODIFIER_POST = "MODIFIER_POST";
 
 export function fetchTousLesPosts(ordre = -1, data = {}){
     const request = axios.post("/requetes/afficher_les_posts/" + ordre, data);
@@ -46,6 +47,14 @@ export function detruirePost(permalien){
     const request = axios.get("/requetes/detruire/" + permalien);
     return {
         type: DETRUIRE_POST,
+        payload: request
+    }
+}
+
+export function modifierPost(data){
+    const request = axios.post("/requetes/modifier/", data);
+    return {
+        type: MODIFIER_POST,
         payload: request
     }
 }

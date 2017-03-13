@@ -5,6 +5,7 @@ const MongoClient = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID;
 const port = process.env.PORT || 8080;
 const app = express();
+let db;
 
 // parse application/json
 app.use(bodyParser.urlencoded({extended: false}))
@@ -28,6 +29,29 @@ app.get('/requetes/detruire/:permalien', (req, res) => {
     })
 })
 
+function affecterDonnees(data){
+    return {
+        "titre": data.titre,
+        "auteur": data.auteur,
+        "categories":data.categories,
+        "permalien":data.permalien,
+        "appercu":data.appercu,
+        "contenu":data.contenu
+    }
+}
+
+app.post("/requetes/modifier", (req, res) => {
+    const id = req.body._id;
+    const data = affecterDonnees(req.body)
+    db.collection('blog').update({
+        "_id": ObjectID(id)
+    }, data , (err, resultat) => {
+        if (err)
+            return console.warn(err)
+        res.send(resultat);
+    });
+})
+
 app.post("/requetes/afficher_les_posts/:ordre", (req, res) => {
     const ordre = parseInt(req.params.ordre)
     const cursor = db.collection('blog').find(req.body).sort([['_id', ordre]]).toArray( (err, resultats) => {
@@ -38,11 +62,14 @@ app.post("/requetes/afficher_les_posts/:ordre", (req, res) => {
     })
 })
 
+//les mois
+const lesMois = ["janvier", "février", "mars", "avril", "mai", "juin","juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+
 //pour ajouter les zeros à la date
 function pad(n){return n<10 ? '0'+n : n}
 
+//assigner le mois
 function assignerMois(m){
-    const lesMois = ["janvier", "février", "mars", "avril", "mai", "juin","juillet", "août", "septembre", "octobre", "novembre", "décembre"];
     return lesMois[m];
 }
 
@@ -71,7 +98,8 @@ app.get("/requetes/afficher_un_post/:permalien", (req, res) => {
 //requete post lorsque le formulaire est submit
 app.post('/requetes/ajouter_un_post', (req, res) => {
     //on sauvegarde les données dans la DB mongo
-    db.collection('blog').save(req.body, (err, result) => {
+    const data = affecterDonnees(req.body)
+    db.collection('blog').save(data, (err, result) => {
         if (err)
             return console.warn(err)
         res.send(result);
