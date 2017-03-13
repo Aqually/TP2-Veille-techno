@@ -12,6 +12,6 @@ export default (
     <Route path="/" component={App}>
         <IndexRoute component={BlogIndex} />
         <Route path="posts/nouveau" component={NouveauPost} />
-        <Route path="/:permalien" component={AfficherPost} />
+        <Route path="article/:permalien" component={AfficherPost} />
     </Route>
 );

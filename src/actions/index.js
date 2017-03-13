@@ -4,6 +4,7 @@ export const FETCH_TOUS_LES_POSTS = "FETCH_TOUS_LES_POSTS";
 export const FETCH_UN_POST = "FETCH_UN_POST";
 export const CREER_POST = "CREER_POST";
 export const DETRUIRE_POST = "DETRUIRE_POST";
+export const RECHERCHER_POST = "RECHERCHER_POST";
 
 export function fetchTousLesPosts(ordre = -1, data = {}){
     const request = axios.post("requetes/afficher_les_posts/" + ordre, data);
@@ -26,6 +27,18 @@ export function creeUnPost(data){
     return {
         type: CREER_POST,
         payload: request
+    }
+}
+
+export function rechercherDesPosts(data){
+    const recherche = {
+        categories: data.categories,
+        auteur: data.auteur,
+        ordre: data.ordre
+    }
+    return {
+        type: RECHERCHER_POST,
+        payload: recherche
     }
 }
 

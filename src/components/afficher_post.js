@@ -10,6 +10,7 @@ class AfficherPost extends Component{
     }
 
     componentWillMount(){
+        console.log(this.props.params.permalien);
         this.props.fetchUnPost(this.props.params.permalien);
     }
 

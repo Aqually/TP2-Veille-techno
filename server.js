@@ -53,7 +53,7 @@ function ajouterLaDate(data){
     const temps = data._id.getTimestamp();
     data.date =
         "Le " + temps.getDate() + " " +
-        assignerMois((temps.getMonth()+1)) +" "+
+        assignerMois((temps.getMonth())) +" "+
         temps.getFullYear()+" à "+
         pad(temps.getHours()) + ":" +
         pad(temps.getMinutes()) + ":" +

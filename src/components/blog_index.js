@@ -1,36 +1,41 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
-import {fetchTousLesPosts} from "../actions/index";
+import {fetchTousLesPosts, rechercherDesPosts} from "../actions/index";
 import { Link } from "react-router";
 import BoutonTriOrdre from "./bouton_trier_ordre";
 
 const rechercheDefault = {$exists : true}
-const initialState = { categories: rechercheDefault, auteur: rechercheDefault, ordre:-1};
 
 class BlogIndex extends Component {
 
     constructor(props){
         super(props);
-        this.state = initialState;
         this.changerOrdre = this.changerOrdre.bind(this);
     }
 
     //appeler avant que le component est render pour la première fois
     componentWillMount(){
+        this.props.rechercherDesPosts({categories:rechercheDefault, auteur:rechercheDefault, ordre: -1});
         this.props.fetchTousLesPosts();
     }
 
     rechercherPost(categories = { rechercheDefault }, auteur = { rechercheDefault }, ordre = -1){
-        this.setState({ categories,ordre,auteur })
+        this.props.rechercherDesPosts({categories, auteur, ordre});
         this.props.fetchTousLesPosts(ordre, {categories ,auteur});
     }
 
+    changerOrdre(){
+        let categories = this.props.recherche.categories;
+        let auteur = this.props.recherche.auteur;
+        this.rechercherPost(categories, auteur, this.props.recherche.ordre * -1)
+    }
+
     enleverRecherche(rechercheType){
-        let categories = this.state.categories
-        let auteur = this.state.auteur
+        let categories = this.props.recherche.categories;
+        let auteur = this.props.recherche.auteur;
         rechercheType  === "categories" ? categories = rechercheDefault : auteur = rechercheDefault;
-        this.rechercherPost(categories, auteur, this.state.ordre);
+        this.rechercherPost(categories, auteur, this.props.recherche.ordre)
     }
 
     renderFiltre(laRecherche, rechercheType){
@@ -51,19 +56,15 @@ class BlogIndex extends Component {
         return this.props.posts.map((post) => {
             return (
                 <li key={post._id}>
-                    <h2><Link to={'/' + post.permalien}>{post.titre}</Link></h2>
+                    <h2><Link to={'/article/' + post.permalien}>{post.titre}</Link></h2>
                     <article>
-                        <h3>{post.date} par <span onClick={ () =>{this.rechercherPost(this.state.categories, post.auteur, this.state.ordre)}} > {post.auteur}</span></h3>
+                        <h3>{post.date} par <span onClick={ () =>{this.rechercherPost(this.props.recherche.categories, post.auteur, this.props.recherche.ordre)}} > {post.auteur}</span></h3>
                         <p>{post.appercu}</p>
-                        <p onClick={ () =>{this.rechercherPost(post.categories, this.state.auteur, this.state.ordre)} } >{post.categories}</p>
+                        <p onClick={ () =>{this.rechercherPost(post.categories, this.props.recherche.auteur, this.props.recherche.ordre)} } >{post.categories}</p>
                     </article>
                 </li>
             )
         })
-    }
-
-    changerOrdre(){
-        this.rechercherPost(this.state.categories, this.state.auteur, this.state.ordre * -1)
     }
 
     render(){
@@ -75,10 +76,10 @@ class BlogIndex extends Component {
                     </Link>
                 </div>
 
-                { this.renderFiltre(this.state.categories, "categories") }
-                { this.renderFiltre(this.state.auteur, "auteur") }
+                { this.renderFiltre(this.props.recherche.categories, "categories") }
+                { this.renderFiltre(this.props.recherche.auteur, "auteur") }
 
-                <BoutonTriOrdre changerTri={this.changerOrdre} ordre={this.state.ordre} />
+                <BoutonTriOrdre changerTri={this.changerOrdre} ordre={this.props.recherche.ordre} />
 
                 <h1>Les articles</h1>
                 <ul>
@@ -91,7 +92,7 @@ class BlogIndex extends Component {
 };
 
 function mapStateToProps(state){
-    return {posts:state.posts.all}
+    return {posts:state.posts.all, recherche:state.posts.recherche}
 }
 
-export default connect(mapStateToProps,{fetchTousLesPosts})(BlogIndex);
+export default connect(mapStateToProps,{fetchTousLesPosts, rechercherDesPosts})(BlogIndex);
