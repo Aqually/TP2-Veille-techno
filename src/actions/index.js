@@ -1,5 +1,9 @@
+//les actions pour faire des modification à l'application
+
+//fonction pour faire les requetes ajax
 import {requeteAJAX} from "../helpers/httpRequest"
 
+//les actions
 export const FETCH_TOUS_LES_POSTS = "FETCH_TOUS_LES_POSTS";
 export const FETCH_UN_POST = "FETCH_UN_POST";
 export const CREER_POST = "CREER_POST";
@@ -7,6 +11,7 @@ export const DETRUIRE_POST = "DETRUIRE_POST";
 export const RECHERCHER_POST = "RECHERCHER_POST";
 export const MODIFIER_POST = "MODIFIER_POST";
 
+//récupérer tous les articles
 export function fetchTousLesPosts(ordre = -1, data = {}){
     const request = requeteAJAX("POST", "/requetes/afficher_les_posts/" + ordre, data);
     return {
@@ -15,6 +20,7 @@ export function fetchTousLesPosts(ordre = -1, data = {}){
     };
 };
 
+//récupéré un artcile
 export function fetchUnPost(permalien){
     const request = requeteAJAX("GET", "/requetes/afficher_un_post/" + permalien);
     return {
@@ -23,6 +29,7 @@ export function fetchUnPost(permalien){
     }
 }
 
+//créer un article
 export function creeUnPost(data){
     const request = requeteAJAX("POST", "/requetes/ajouter_un_post", data);
     return {
@@ -31,6 +38,7 @@ export function creeUnPost(data){
     }
 }
 
+//recherche un article selon des paramètres
 export function rechercherDesPosts(data){
     const recherche = {
         categories: data.categories,
@@ -43,6 +51,7 @@ export function rechercherDesPosts(data){
     }
 }
 
+//détruire un article
 export function detruirePost(permalien){
     const request = requeteAJAX("GET", "/requetes/detruire/" + permalien);
     return {
@@ -51,6 +60,7 @@ export function detruirePost(permalien){
     }
 }
 
+//modifier un article
 export function modifierPost(data){
     const request = requeteAJAX("POST", "/requetes/modifier/", data);
     return {

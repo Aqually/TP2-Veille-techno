@@ -34,6 +34,7 @@ module.exports = {
         loaders: [
             { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"},
             { test: /\.css$/, loader: "style-loader!css-loader"},
+            { test: /\.(png|jpg)$/, loader: 'file-loader?name=images/[name].[ext]' },
         ],
         query: {
             presets: ['react', 'es2015', 'stage-1']

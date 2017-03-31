@@ -13,7 +13,7 @@ export function requeteAJAX (method, requete, data = null) {
         xhr.onload = () => {
             //si prêt et pas d'erreur, on retourne les données
             if (xhr.readyState === 4 && xhr.status === 200) {
-                resolve({data: JSON.parse(xhr.responseText)});
+                resolve( {data: JSON.parse(xhr.responseText)} );
             } else {
                 //sinon, on rejete la promise
                 reject({
@@ -22,12 +22,15 @@ export function requeteAJAX (method, requete, data = null) {
                 });
             }
         };
+        //si une erreur
         xhr.onerror = () => {
+            //on rejete
             reject({
                 status: xhr.status,
                 statusText: xhr.statusText
             });
         };
+        //si c'est une methode post, on envoie l'information en param
         if(method === "POST"){
             xhr.send(JSON.stringify(data));
         }else{

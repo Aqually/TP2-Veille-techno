@@ -28,6 +28,7 @@ class NouveauPost extends Component {
         })
     }
 
+    //lorsque on submit le form
     handleFormSubmit(e){
         e.preventDefault()
         const data = {
@@ -38,31 +39,40 @@ class NouveauPost extends Component {
             appercu: this.state.appercu,
             contenu: this.state.contenu
         }
+        //créer un post
         this.props.creeUnPost(data)
             .then( () =>{
+                //redirige l'utilisateur sur la page d'accueil
                 this.context.router.push("/");
         })
     }
 
+    //gerer les changements, mettre à jour le state de la class avec les données du formulaire
     handleChange(e){
         this.setState( {[e.target.name]: e.target.value} )
     }
 
+    //revenir sur la page d'accueil
     handleCancel(){
         this.context.router.push("/");
     }
 
+    //render la page
     render(){
         return(
-            <Form
-                onHandleFormSubmit={this.handleFormSubmit}
-                onHandleChange = { this.handleChange }
-                onHandleModifier = { this.handleCancel }
-                data = {
-                    {titre: this.state.titre, permalien: this.state.permalien, auteur: this.state.auteur,
-                    categories: this.state.categories, appercu: this.state.appercu, contenu: this.state.contenu}
-                }
-            />
+
+            <main>
+                <h1>Nouvel article</h1>
+                <Form
+                    onHandleFormSubmit={this.handleFormSubmit}
+                    onHandleChange = { this.handleChange }
+                    onHandleModifier = { this.handleCancel }
+                    data = {
+                        {titre: this.state.titre, permalien: this.state.permalien, auteur: this.state.auteur,
+                        categories: this.state.categories, appercu: this.state.appercu, contenu: this.state.contenu}
+                    }
+                />
+            </main>
         )
     }
 }

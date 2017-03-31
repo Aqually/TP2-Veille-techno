@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+//le formulaire pour créer un nouvel article et modifier
 export default class Form extends Component {
   render() {
 
@@ -18,10 +18,10 @@ export default class Form extends Component {
             <input name="categories" onChange={ this.props.onHandleChange } type="text" value={this.props.data.categories} required />
 
             <label>Apperçu</label>
-            <input name="appercu" onChange={ this.props.onHandleChange } type="text" value={this.props.data.appercu} required />
+            <textarea name="appercu" onChange={ this.props.onHandleChange } type="text" value={this.props.data.appercu} required />
 
             <label>Contenu</label>
-            <input name="contenu" onChange={ this.props.onHandleChange } type="textarea" value={this.props.data.contenu} required />
+            <textarea name="contenu" onChange={ this.props.onHandleChange } type="textarea" value={this.props.data.contenu} required />
             <button type="submit">Enregistrer</button>
             <button type="button" onClick={ this.props.onHandleModifier }>Cancel</button>
         </form>
