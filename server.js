@@ -18,8 +18,11 @@ MongoClient.connect('mongodb://127.0.0.1:27017/blog', (err, database) => {
     db = database
 })
 
+//pour détruire un article avec le permalien
 app.get('/requetes/detruire/:permalien', (req, res) => {
+    //récupère le permalien
     const permalien = req.params.permalien
+    //on cherche dans blog un entré qui contient le permalien
     db.collection('blog').findOneAndDelete({
         "permalien": permalien
     }, (err, resultat) => {
@@ -29,6 +32,7 @@ app.get('/requetes/detruire/:permalien', (req, res) => {
     })
 })
 
+//pour affecter les données
 function affecterDonnees(data){
     return {
         "titre": data.titre,
@@ -40,9 +44,13 @@ function affecterDonnees(data){
     }
 }
 
+//pour modifier un article
 app.post("/requetes/modifier", (req, res) => {
+    //récupere le _id
     const id = req.body._id;
+    //formatter les données
     const data = affecterDonnees(req.body)
+    //chercher l'entré avec le _id et mettre à jour
     db.collection('blog').update({
         "_id": ObjectID(id)
     }, data , (err, resultat) => {
@@ -52,12 +60,15 @@ app.post("/requetes/modifier", (req, res) => {
     });
 })
 
+//afficher tous les articles selon l'ordre (ancien ou récent en premier)
 app.post("/requetes/afficher_les_posts/:ordre", (req, res) => {
+    //récupère l'ordre
     const ordre = parseInt(req.params.ordre)
+    //rechercher les données et classé en ordre
     const cursor = db.collection('blog').find(req.body).sort([['_id', ordre]]).toArray( (err, resultats) => {
         if (err)
             return console.warn(err)
-        // affiche le contenu de la BD
+        //retourne les données vers React
         res.send(resultats.map( (resultat) => {return ajouterLaDate(resultat)}));
     })
 })
@@ -65,10 +76,10 @@ app.post("/requetes/afficher_les_posts/:ordre", (req, res) => {
 //les mois
 const lesMois = ["janvier", "février", "mars", "avril", "mai", "juin","juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 
-//pour ajouter les zeros à la date
+//pour ajouter les zeros à la date/heure
 function pad(n){return n<10 ? '0'+n : n}
 
-//assigner le mois
+//assigner le mois à l'article
 function assignerMois(m){
     return lesMois[m];
 }
@@ -86,19 +97,24 @@ function ajouterLaDate(data){
     return data;
 }
 
+//pour afficher un article selon le permalien entré dans la barre d'addresse
 app.get("/requetes/afficher_un_post/:permalien", (req, res) => {
+    //récupère le permalien
     const permalien = req.params.permalien
+    //rechercher l'article qui contient ce permalien
     var cursor = db.collection('blog').find({"permalien": permalien }).toArray( (err, resultat) => {
         if (err)
             return console.warn(err)
+        //on retourne les données
         res.send(ajouterLaDate(resultat[0]));
     })
 })
 
 //requete post lorsque le formulaire est submit
 app.post('/requetes/ajouter_un_post', (req, res) => {
-    //on sauvegarde les données dans la DB mongo
+    //traiter les données
     const data = affecterDonnees(req.body)
+    //on sauvegarde les données dans la DB mongo
     db.collection('blog').save(data, (err, result) => {
         if (err)
             return console.warn(err)
@@ -106,12 +122,17 @@ app.post('/requetes/ajouter_un_post', (req, res) => {
     })
 })
 
+//avoir accès au fichier public qui contient les images
 app.use(express.static(__dirname + "/public"));
+//avoir accès au fichier dist (distribution) qui contient les fichiers react
 app.use(express.static(__dirname + "/dist"));
 
+//lorsqu'un utilisateur arrive sur le site (et que le URL ne correspond à aucun avant de ce fichier)
+//redirige vers l'application react
 app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname + "/dist", "index.html"));
 })
 
+//faire marcher l'application sur le port indiqué
 app.listen(port);
 console.log("serveur ouvert")
